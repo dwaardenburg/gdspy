@@ -57,10 +57,10 @@ def test_inside():
 def test_copy():
     p = gdspy.Rectangle((0, 0), (1, 1))
     q = gdspy.copy(p, 1, -1)
-    assert set(p.points[:, 0]) == {0, 1}
-    assert set(p.points[:, 1]) == {0, 1}
-    assert set(q.points[:, 0]) == {1, 2}
-    assert set(q.points[:, 1]) == {-1, 0}
+    assert set(p.polygons[0][:, 0]) == {0, 1}
+    assert set(p.polygons[0][:, 1]) == {0, 1}
+    assert set(q.polygons[0][:, 0]) == {1, 2}
+    assert set(q.polygons[0][:, 1]) == {-1, 0}
     p = gdspy.PolygonSet([[(0, 0), (1, 0), (0, 1)], [(2, 2), (3, 2), (2, 3)]])
     q = gdspy.copy(p, 1, -1)
     assert set(p.polygons[0][:, 0]) == {0, 1}
@@ -98,9 +98,14 @@ def test_write_gds(tmpdir):
     c4.add(gdspy.CellArray(c2, 2, 3, (1, 4), (-1, -2), 180, 0.5, True))
 
     fname1 = str(tmpdir.join('test1.gds'))
-    gdspy.write_gds(fname1, name='lib', unit=2e-3, precision=1e-5)
-    lib1 = gdspy.GdsLibrary()
-    lib1.read_gds(fname1, 1e-3, {'fu_rw_gds_1': '1'}, {2: 4}, {4: 2}, {6: 7})
+    gdspy.write_gds(fname1, name='lib', unit=2e-6, precision=1e-8)
+    lib1 = gdspy.GdsLibrary(
+        infile=fname1,
+        units='convert',
+        rename={'fu_rw_gds_1': '1'},
+        layers={2: 4},
+        datatypes={4: 2},
+        texttypes={6: 7})
     assert lib1.name == 'lib'
     assert len(lib1.cell_dict) == 4
     assert set(lib1.cell_dict.keys()) == {
@@ -109,8 +114,8 @@ def test_write_gds(tmpdir):
     c = lib1.cell_dict['1']
     assert len(c.elements) == len(c.labels) == 1
     assert c.elements[0].area() == 12.0
-    assert c.elements[0].layer == 4
-    assert c.elements[0].datatype == 2
+    assert c.elements[0].layers == [4]
+    assert c.elements[0].datatypes == [2]
     assert c.labels[0].text == 'label'
     assert c.labels[0].position[0] == 2 and c.labels[0].position[1] == -2
     assert c.labels[0].anchor == 4

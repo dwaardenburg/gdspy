@@ -59,10 +59,25 @@ Help support gdspy development by [donating via PayPal](https://www.paypal.com/c
 
 ## History of changes
 
+### Version 1.3.1 (Jun 29, 2018)
+* `PolygonSet` becomes the base class for all polygons, in particular `Polygon` and `Rectangle`.
+* Added `Cell.remove_polygons` and `Cell.remove_labels` functions to allow filtering a cell contents based, for example, on each element's layer.
+* Added `PolygonSet.scale` utility method.
+* Added `PolygonSet.get_bounding_box` utility method.
+* Added argument `timestamp` to `Cell.to_gds`, `GdsLibrary.write_gds` and `GdsWriter`.
+* Added `unit` and `precision` arguments to `GdsLibrary` initialization and removed from its `write_gds` method.
+* Changed the meaning of argument `unit` in `GdsLibrary.read_gds`.
+* Improved `slice` to avoid errors when slicing in multiple positions at once.
+* Improved `PolygonSet.fracture` to reduce number of function calls.
+* Removed incorrect absolute flags for magnification and rotation in `CellReference` and `CellArray`.
+* Minor bug fixes.
+* Documentation fixes.
+* Removed deprecated classes and functions.
+
 ### Version 1.2.1 (Dec 5, 2017)
 * `GdsLibrary` can be created directly from a GDSII file
 * Added return value to `GdsLibrary.read_gds`
-* Fix return value of `GdsLibrary.add`
+* Fixed return value of `GdsLibrary.add`
 
 ### Version 1.2 (Oct 21, 2017)
 * Added new `gdsii_hash` function.
